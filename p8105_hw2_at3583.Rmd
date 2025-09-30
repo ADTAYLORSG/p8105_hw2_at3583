@@ -12,6 +12,22 @@ output: github_document
 library(tidyverse)
 library(readr)
 pols_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
-umemp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
+unemp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
 snp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
 ```
+
+
+```{r}
+library(dplyr)
+library(tidyr)
+pols_df <- pols_df %>%
+  separate(mon, into = c("year", "month", "day"), sep ="-") %>%
+  mutate(across(c(year, month, day), as.integer)) %>%
+  mutate(
+    month = month.name[month],
+    president = ifelse(prez_gop == 1, "gop", "dem")
+    ) %>%
+  select(-c(prez_dem, prez_gop, day))
+```
+
+
