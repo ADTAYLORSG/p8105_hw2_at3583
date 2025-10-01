@@ -8,19 +8,23 @@ output: github_document
 
 # Problem 1 
 
-```{r}
 library(tidyverse)
+library(janitor)
 library(readr)
+
+# Import .csv files for FiveThirtyEight data
 pols_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
 unemp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
 snp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
-```
 
 
 ```{r}
 library(dplyr)
 library(tidyr)
 pols_df <- pols_df %>%
+#Clean pols dataframe and others using use separate()
+pols_df = pols_df %>%
+  clean_names() %>%
   separate(mon, into = c("year", "month", "day"), sep ="-") %>%
   mutate(across(c(year, month, day), as.integer)) %>%
   mutate(
@@ -28,15 +32,40 @@ pols_df <- pols_df %>%
     president = ifelse(prez_gop == 1, "gop", "dem")
     ) %>%
   select(-c(prez_dem, prez_gop, day))
-```
+  select(-prez_dem, -prez_gop, -day)
 
-```{r}
+#Clean snp dataframe
 snp_df <- snp_df %>%
+  clean_names() %>%
   separate(date, into = c("month", "day", "year"), sep = "/") %>%
   mutate(across(c(year, month, day), as.integer)) %>%
   mutate(month = month.name[month]) %>%
   select(year, month, everything(), -day) %>%
   arrange(year, month)
+
+#Clean unemp_df
+unemp_df <- unemp_df %>%
+  clean_names() %>%
+  pivot_longer(
+   jan:dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) %>%
+  mutate(
+    month = str_to_title(month),
+    year = as.integer(Year)
+  ) %>%
+  select(year, month, unemployment)
 ```
 
+```{r}
+# Merge pols, snp and unemp dataframes
+merged_df <- pols_df %>%
+  left_join(snp_df, by = c("year", "month")) %>%
+  left_join(unemp_df, by = c("year", "month"))
+```
+
+Summary: 
+
+# Problem 2
 
