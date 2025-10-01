@@ -30,4 +30,13 @@ pols_df <- pols_df %>%
   select(-c(prez_dem, prez_gop, day))
 ```
 
+```{r}
+snp_df <- snp_df %>%
+  separate(date, into = c("month", "day", "year"), sep = "/") %>%
+  mutate(across(c(year, month, day), as.integer)) %>%
+  mutate(month = month.name[month]) %>%
+  select(year, month, everything(), -day) %>%
+  arrange(year, month)
+```
+
 
