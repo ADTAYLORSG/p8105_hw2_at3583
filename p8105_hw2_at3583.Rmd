@@ -171,3 +171,19 @@ zillow_df <- zori_pivot %>%
   left_join(zip_bor, by = "zip", relationship = "many-to-many")
 ```
 
+```{r overview, include=FALSE}
+# combined data overview
+n_obs <- nrow(zillow_df)
+n_zip <- n_distinct(zillow_df$zip)
+n_neighborhoods <- n_distinct(zillow_df$neighborhood)
+missing_zips <- setdiff(zip_bor$zip, zori_pivot$zip)
+
+# covid rental drop
+covid_drop <- zillow_df %>%
+  filter(month(date) == 1, year %in% c(2020, 2021)) %>%
+  select(zip, borough, neighborhood, year, rent_index) %>%
+  pivot_wider(names_from = year, values_from = rent_index) %>%
+  mutate(drop = `2021` - `2020`) %>%
+  arrange(drop) %>%
+  slice(1:10)
+```
