@@ -5,7 +5,7 @@ date: "September 28, 2025"
 output: github_document
 ---
 
-```{r, echo=FALSE}
+```{r setup, message=FALSE, warning=FALSE}
 # load all packages
 library(readr)
 library(tidyverse)
