@@ -187,3 +187,7 @@ covid_drop <- zillow_df %>%
   arrange(drop) %>%
   slice(1:10)
 ```
+
+The final Zillow dataset contains `r n_obs` observations across 
+`r n_zip` unique ZIP codes and `r n_neighborhoods` neighborhoods in NYC.  
+A numbnerof ZIP codes from the borough dataset are not present in the Zillow dataset, including `r paste(head(missing_zips, 3), collapse = ", ")`, which can be indicative of areas with limited rental activity or incomplete creporting. When comparing January 2021 to January 2020, the ten ZIP codes with the steepest declines in rental prices, shown below, are mostly concentrated in Manhattan and Brooklyn, highlight the impact of the COVID-19 pandemic on these boroughs. `r  knitr::kable(covid_drop)`
