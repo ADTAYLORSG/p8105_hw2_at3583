@@ -109,4 +109,4 @@ str(gwynnda$year)
 trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
 ```
 
-
+ The combined Trash Wheel dataset contains `r nrow(trash_df)` observations and `r ncol(trash_df)` variables, collected across `r min(trash_df$year, na.rm = TRUE)` to `r max(trash_df$year, na.rm = TRUE)`. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of `r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)` tons of trash,while Gwynnda collected `r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)` cigarette butts in June 2022.
