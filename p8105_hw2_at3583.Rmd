@@ -12,9 +12,9 @@ library(readr)
 library(tidyverse)
 
 # Import .csv files for FiveThirtyEight datasets
-pols_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
-unemp_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
-snp_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
+pols_df <- read_csv("data/pols-month.csv")
+unemp_df <- read_csv("data/unemployment.csv")
+snp_df <- read_csv("data/snp.csv")
 ```
 
 ```{r}
@@ -60,7 +60,7 @@ merged_df <- pols_df %>%
   left_join(unemp_df, by = c("year", "month"))
 ```
 
-The **pols_df** dataset contains information on national politicians by party, including `r ncol(pols_df) - 3` variables on party composition and affiliation of the sitting president, while the **snp_df** dataset contains monthly closing values of the S&P stock index, with `r nrow(snp_df)` observations. The **unemployment_df** dataset reports U.S. unemployment rates by year and month, tidied to long format with `r ncol(unemp_df)` fields. After cleaning and merging of all three data frames,the resulting datasets contains **`r nrow(merged_df)` observations** and **`r ncol(merged_df)` variables**, spanning the years **`r min(merged_df$year)` to `r max(merged_df$year)`**. Highlighted variables include `year`, `month`, the `president` indicator (with values `r paste(unique(merged_df$president), collapse = ", ")`), party composition counts such as `gov_gop`, `sen_gop`, `rep_gop`, the S&P closing index (`close`), and unemployment rates (`unemployment`).  
+The `pols_df` dataset contains information on national politicians by party, including `r ncol(pols_df) - 3` variables on party composition and affiliation of the sitting president, while the `snp_df` dataset contains monthly closing values of the S&P stock index, with `r nrow(snp_df)` observations. The `unemployment_df`dataset reports U.S. unemployment rates by year and month, tidied to long format with `r ncol(unemp_df)` fields. After cleaning and merging of all three data frames,the resulting datasets contains **`r nrow(merged_df)` observations** and **`r ncol(merged_df)` variables**, spanning the years **`r min(merged_df$year)` to `r max(merged_df$year)`**. Highlighted variables include `year`, `month`, the `president` indicator (with values `r paste(unique(merged_df$president), collapse = ", ")`), party composition counts such as `gov_gop`, `sen_gop`, `rep_gop`, the S&P closing index (`close`), and unemployment rates (`unemployment`).  
 
 # Problem 2 -- Trash Wheel
 
@@ -71,7 +71,7 @@ library(dplyr)
 library(readr)
 
 # read and clean Mr. Trash Wheel sheet
-mr_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>%
+mr_trash <- read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>%
   clean_names() %>%
   filter(!is.na(dumpster)) %>%
   mutate(
@@ -81,7 +81,7 @@ mr_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.x
   )
 
 # read and clean Professor Trash Wheel sheet
-prof_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>%
+prof_trash <- read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>%
   clean_names() %>%
   filter(!is.na(dumpster)) %>%
   mutate(
@@ -89,7 +89,7 @@ prof_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data
     wheel = "Professor Trash Wheel")
 
 # read and clean Gwynns Falls Trash Wheel sheet
-gwynnda <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel", skip = 1) %>%
+gwynnda <- read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel", skip = 1) %>%
   clean_names() %>%
   filter(!is.na(dumpster)) %>%
   mutate(
@@ -109,7 +109,7 @@ str(gwynnda$year)
 trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
 ```
 
- The combined Trash Wheel dataset contains `r nrow(trash_df)` observations and `r ncol(trash_df)` variables, collected across `r min(trash_df$year, na.rm = TRUE)` to `r max(trash_df$year, na.rm = TRUE)`. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of `r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)` tons of trash,while Gwynnda collected `r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)` cigarette butts in June 2022.
+ The combined Trash Wheel dataset contains **`r nrow(trash_df)`** observations and **`r ncol(trash_df)`** variables, collected across **`r min(trash_df$year, na.rm = TRUE)`** to **`r max(trash_df$year, na.rm = TRUE)`**. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of **`r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)`** tons of trash,while Gwynnda collected **`r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)`** cigarette butts in June 2022.
  
 # Problem 3 -- Zillow
 
@@ -121,11 +121,11 @@ library(janitor)
 library(lubridate)
 
 # import Zillow Rent Index (ZORI) dataset
-zori <- read_csv("~/Desktop/GIT Items/zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") %>%
+zori <- read_csv("data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") %>%
 clean_names()
 
 # import Zip Codes dataset
-zip_bor <- read_csv("~/Desktop/GIT Items/zillow_data/Zip Codes.csv") %>%
+zip_bor <- read_csv("data/Zip Codes.csv") %>%
 clean_names()
 ```
 
@@ -188,6 +188,5 @@ covid_drop <- zillow_df %>%
   slice(1:10)
 ```
 
-The final Zillow dataset contains `r n_obs` observations across 
-`r n_zip` unique ZIP codes and `r n_neighborhoods` neighborhoods in NYC.  
-A numbnerof ZIP codes from the borough dataset are not present in the Zillow dataset, including `r paste(head(missing_zips, 3), collapse = ", ")`, which can be indicative of areas with limited rental activity or incomplete creporting. When comparing January 2021 to January 2020, the ten ZIP codes with the steepest declines in rental prices, shown below, are mostly concentrated in Manhattan and Brooklyn, highlight the impact of the COVID-19 pandemic on these boroughs. `r  knitr::kable(covid_drop)`
+The final Zillow dataset contains **`r n_obs`** observations across 
+**`r n_zip`** unique ZIP codes and **`r n_neighborhoods`** neighborhoods in NYC. A numbnerof ZIP codes from the borough dataset are not present in the Zillow dataset, including **`r paste(head(missing_zips, 3), collapse = ", ")`**, which can be indicative of areas with limited rental activity or incomplete creporting. When comparing January 2021 to January 2020, the ten ZIP codes with the steepest declines in rental prices, shown below, are mostly concentrated in Manhattan and Brooklyn, highlight the impact of the COVID-19 pandemic on these boroughs. `r  knitr::kable(covid_drop)`
