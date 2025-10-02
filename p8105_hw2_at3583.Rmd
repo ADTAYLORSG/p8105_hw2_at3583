@@ -109,13 +109,4 @@ str(gwynnda$year)
 trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
 ```
 
-# Summaries for questions
-prof_total_weight <- trash_df %>%
-  filter(wheel == "Professor Trash Wheel") %>%
-  summarise(total_weight = sum(weight_tons, na.rm = TRUE))
-
-gwynnda_cigs <- trash_df %>%
-  filter(wheel == "Gwynnda", month == "June", year == 2022) %>%
-  summarise(total_cigs = sum(cigarette_butts, na.rm = TRUE))
-```
 
