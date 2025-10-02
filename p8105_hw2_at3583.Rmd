@@ -5,15 +5,13 @@ date: "September 28, 2025"
 output: github_document
 ---
 
-library(tidyverse)
-library(janitor)
-library(readr)
-
-# Problem 1 
+# Problem 1 - FiveThirtyEight
 
 ```{r}
 library(readr)
-# Import .csv files for FiveThirtyEight data
+library(tidyverse)
+
+# Import .csv files for FiveThirtyEight datasets
 pols_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
 unemp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
 snp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
@@ -23,7 +21,8 @@ snp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/
 library(tidyverse)
 library(dplyr)
 library(tidyr)
-# clean pols_df using separate
+
+#clean pols_df using separate
 pols_df <- pols_df %>%
 separate(mon, into = c("year", "month", "day"), sep ="-") %>%
 mutate(across(c(year, month, day), as.integer)) %>%
@@ -33,7 +32,7 @@ president = ifelse(prez_gop == 1, "gop", "dem")
 ) %>%
 select(-prez_dem, -prez_gop, -day)
 
-# clean snp_df using separate
+#clean snp_df using separate
 snp_df <- snp_df %>%
 separate(date, into = c("month", "day", "year"), sep = "/") %>%
 mutate(across(c(year, month, day), as.integer)) %>%
@@ -55,14 +54,68 @@ mutate(
   month = month.name[match(str_to_title(month), month.abb)]
 )
   
-# Merge pols, snp and unemp dataframes
+#merge pols, snp and unemp dataframes
 merged_df <- pols_df %>%
   left_join(snp_df, by = c("year", "month")) %>%
   left_join(unemp_df, by = c("year", "month"))
 ```
 
-## The **pols_df** dataset contains information on national politicians by party, including `r ncol(pols_df) - 3` variables on party composition and affiliation of the sitting president, while the **snp_df** dataset contains monthly closing values of the S&P stock index, with `r nrow(snp_df)` observations. The **unemployment_df** dataset reports U.S. unemployment rates by year and month, tidied to long format with `r ncol(unemp_df)` fields. After cleaning and merging of all three data frames,the resulting datasets contains **`r nrow(merged_df)` observations** and **`r ncol(merged_df)` variables**, spanning the years **`r min(merged_df$year)` to `r max(merged_df$year)`**. Highlighted variables include `year`, `month`, the `president` indicator (with values `r paste(unique(merged_df$president), collapse = ", ")`), party composition counts such as `gov_gop`, `sen_gop`, `rep_gop`, the S&P closing index (`close`), and unemployment rates (`unemployment`).  
+The **pols_df** dataset contains information on national politicians by party, including `r ncol(pols_df) - 3` variables on party composition and affiliation of the sitting president, while the **snp_df** dataset contains monthly closing values of the S&P stock index, with `r nrow(snp_df)` observations. The **unemployment_df** dataset reports U.S. unemployment rates by year and month, tidied to long format with `r ncol(unemp_df)` fields. After cleaning and merging of all three data frames,the resulting datasets contains **`r nrow(merged_df)` observations** and **`r ncol(merged_df)` variables**, spanning the years **`r min(merged_df$year)` to `r max(merged_df$year)`**. Highlighted variables include `year`, `month`, the `president` indicator (with values `r paste(unique(merged_df$president), collapse = ", ")`), party composition counts such as `gov_gop`, `sen_gop`, `rep_gop`, the S&P closing index (`close`), and unemployment rates (`unemployment`).  
 
-# Problem 2
+# Problem 2 - Trash Wheel
 
+```{r}
+library(readxl)
+library(janitor)
+library(dplyr)
+library(readr)
+
+#read and clean Mr. Trash Wheel sheet
+mr_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>%
+  clean_names() %>%
+  filter(!is.na(dumpster)) %>%
+  mutate(
+    year = as.integer(readr::parse_number(year)),
+    sports_balls = as.integer(round(sports_balls, 0)),
+    wheel = "Mr. Trash Wheel"
+  )
+
+#read and clean Professor Trash Wheel sheet
+prof_trash <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>%
+  clean_names() %>%
+  filter(!is.na(dumpster)) %>%
+  mutate(
+    year = as.integer(readr::parse_number(as.character(year))),
+    wheel = "Professor Trash Wheel")
+
+#read and clean Gwynns Falls Trash Wheel sheet
+gwynnda <- read_excel("~/Desktop/GIT Items/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel", skip = 1) %>%
+  clean_names() %>%
+  filter(!is.na(dumpster)) %>%
+  mutate(
+    year = as.integer(readr::parse_number(as.character(year))),
+    wheel = "Gwynnda")
+```
+
+```{r check structure,include=FALSE}
+#check data structure before binding
+str(mr_trash$year)
+str(prof_trash$year)
+str(gwynnda$year)
+```
+
+```{r}
+# combine dataframes into one tidy dataset
+trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
+```
+
+# Summaries for questions
+prof_total_weight <- trash_df %>%
+  filter(wheel == "Professor Trash Wheel") %>%
+  summarise(total_weight = sum(weight_tons, na.rm = TRUE))
+
+gwynnda_cigs <- trash_df %>%
+  filter(wheel == "Gwynnda", month == "June", year == 2022) %>%
+  summarise(total_cigs = sum(cigarette_butts, na.rm = TRUE))
+```
 
