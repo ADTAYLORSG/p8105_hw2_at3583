@@ -5,16 +5,16 @@ date: "September 28, 2025"
 output: github_document
 ---
 
-# Problem 1 - FiveThirtyEight
+# Problem 1 -- FiveThirtyEight
 
 ```{r}
 library(readr)
 library(tidyverse)
 
 # Import .csv files for FiveThirtyEight datasets
-pols_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
-unemp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
-snp_df <- read_csv("/Users/goddid333/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
+pols_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/pols-month.csv")
+unemp_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/unemployment.csv")
+snp_df <- read_csv("~/Desktop/GIT Items/fivethirtyeight_datasets/snp.csv")
 ```
 
 ```{r}
@@ -62,7 +62,7 @@ merged_df <- pols_df %>%
 
 The **pols_df** dataset contains information on national politicians by party, including `r ncol(pols_df) - 3` variables on party composition and affiliation of the sitting president, while the **snp_df** dataset contains monthly closing values of the S&P stock index, with `r nrow(snp_df)` observations. The **unemployment_df** dataset reports U.S. unemployment rates by year and month, tidied to long format with `r ncol(unemp_df)` fields. After cleaning and merging of all three data frames,the resulting datasets contains **`r nrow(merged_df)` observations** and **`r ncol(merged_df)` variables**, spanning the years **`r min(merged_df$year)` to `r max(merged_df$year)`**. Highlighted variables include `year`, `month`, the `president` indicator (with values `r paste(unique(merged_df$president), collapse = ", ")`), party composition counts such as `gov_gop`, `sen_gop`, `rep_gop`, the S&P closing index (`close`), and unemployment rates (`unemployment`).  
 
-# Problem 2 - Trash Wheel
+# Problem 2 -- Trash Wheel
 
 ```{r}
 library(readxl)
@@ -110,3 +110,28 @@ trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
 ```
 
  The combined Trash Wheel dataset contains `r nrow(trash_df)` observations and `r ncol(trash_df)` variables, collected across `r min(trash_df$year, na.rm = TRUE)` to `r max(trash_df$year, na.rm = TRUE)`. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of `r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)` tons of trash,while Gwynnda collected `r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)` cigarette butts in June 2022.
+ 
+# Problem 3 -- Zillow
+
+```{r}
+library(readr)
+library(dplyr)
+library(tidyr)
+library(janitor)
+library(lubridate)
+
+# import Zillow Rent Index (ZORI) dataset
+zori <- read_csv("~/Desktop/GIT Items/zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") %>%
+clean_names()
+
+# import Zip Codes dataset
+zip_bor <- read_csv("~/Desktop/GIT Items/zillow_data/Zip Codes.csv") %>%
+clean_names()
+```
+
+
+
+
+
+
+
