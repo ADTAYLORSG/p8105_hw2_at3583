@@ -5,12 +5,20 @@ date: "September 28, 2025"
 output: github_document
 ---
 
-# Problem 1 -- FiveThirtyEight
-
-```{r}
+```{r, echo=FALSE}
+# load all packages
 library(readr)
 library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(readxl)
+library(janitor)
+library(lubridate)
+```
 
+# Problem 1 -- FiveThirtyEight
+
+```{r, echo=FALSE}
 # Import .csv files for FiveThirtyEight datasets
 pols_df <- read_csv("data/pols-month.csv")
 unemp_df <- read_csv("data/unemployment.csv")
@@ -18,10 +26,6 @@ snp_df <- read_csv("data/snp.csv")
 ```
 
 ```{r}
-library(tidyverse)
-library(dplyr)
-library(tidyr)
-
 #clean pols_df using separate
 pols_df <- pols_df %>%
 separate(mon, into = c("year", "month", "day"), sep ="-") %>%
@@ -64,12 +68,7 @@ The `pols_df` dataset contains information on national politicians by party, inc
 
 # Problem 2 -- Trash Wheel
 
-```{r}
-library(readxl)
-library(janitor)
-library(dplyr)
-library(readr)
-
+```{r, echo=FALSE}
 # read and clean Mr. Trash Wheel sheet
 mr_trash <- read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>%
   clean_names() %>%
@@ -97,7 +96,7 @@ gwynnda <- read_excel("data/202509 Trash Wheel Collection Data.xlsx", sheet = "G
     wheel = "Gwynnda")
 ```
 
-```{r check structure,include=FALSE}
+```{r check structure,echo=FALSE}
 # check data structure before binding
 str(mr_trash$year)
 str(prof_trash$year)
@@ -109,17 +108,11 @@ str(gwynnda$year)
 trash_df <- bind_rows(mr_trash, prof_trash, gwynnda)
 ```
 
- The combined Trash Wheel dataset contains **`r nrow(trash_df)`** observations and **`r ncol(trash_df)`** variables, collected across **`r min(trash_df$year, na.rm = TRUE)`** to **`r max(trash_df$year, na.rm = TRUE)`**. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of **`r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)`** tons of trash,while Gwynnda collected **`r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)`** cigarette butts in June 2022.
+The combined Trash Wheel dataset contains **`r nrow(trash_df)`** observations and **`r ncol(trash_df)`** variables, collected across **`r min(trash_df$year, na.rm = TRUE)`** to **`r max(trash_df$year, na.rm = TRUE)`**. Variables include collection date (`year`, `month`), volume and weight of trash collected (`volume_cubic_yards`), (`weight_tons`), and the counts of items such as `plastic_bottles`, `glass_bottles`, and `cigarette_butts`. Overall, Professor Trash Wheel has collected a total of **`r sum(trash_df$weight_tons[trash_df$wheel == "Professor Trash Wheel"], na.rm = TRUE)`** tons of trash,while Gwynnda collected **`r sum(trash_df$cigarette_butts[trash_df$wheel == "Gwynnda" & trash_df$month == "June" & trash_df$year == 2022], na.rm = TRUE)`** cigarette butts in June 2022.
  
 # Problem 3 -- Zillow
 
-```{r}
-library(readr)
-library(dplyr)
-library(tidyr)
-library(janitor)
-library(lubridate)
-
+```{r, echo=FALSE}
 # import Zillow Rent Index (ZORI) dataset
 zori <- read_csv("data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv") %>%
 clean_names()
@@ -171,7 +164,7 @@ zillow_df <- zori_pivot %>%
   left_join(zip_bor, by = "zip", relationship = "many-to-many")
 ```
 
-```{r overview, include=FALSE}
+```{r overview, echo=FALSE}
 # combined data overview
 n_obs <- nrow(zillow_df)
 n_zip <- n_distinct(zillow_df$zip)
@@ -189,4 +182,4 @@ covid_drop <- zillow_df %>%
 ```
 
 The final Zillow dataset contains **`r n_obs`** observations across 
-**`r n_zip`** unique ZIP codes and **`r n_neighborhoods`** neighborhoods in NYC. A numbnerof ZIP codes from the borough dataset are not present in the Zillow dataset, including **`r paste(head(missing_zips, 3), collapse = ", ")`**, which can be indicative of areas with limited rental activity or incomplete creporting. When comparing January 2021 to January 2020, the ten ZIP codes with the steepest declines in rental prices, shown below, are mostly concentrated in Manhattan and Brooklyn, highlight the impact of the COVID-19 pandemic on these boroughs. `r  knitr::kable(covid_drop)`
+**`r n_zip`** unique ZIP codes and **`r n_neighborhoods`** neighborhoods in NYC. A numbner of ZIP codes from the borough dataset are not present in the Zillow dataset, including **`r paste(head(missing_zips, 3), collapse = ", ")`**, which can be indicative of areas with limited rental activity or incomplete reporting. When comparing January 2021 to January 2020, the ten ZIP codes with the steepest declines in rental prices, shown below, are mostly concentrated in Manhattan and Brooklyn, highlight the impact of the COVID-19 pandemic on these boroughs. `r  knitr::kable(covid_drop)`
